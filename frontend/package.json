@@ -1,0 +1,23 @@
+{
+  "name": "neoboi-frontend",
+  "version": "1.0.0",
+  "description": "React frontend for Neo4j Graph Visualization",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js --dev",
+    "dev:watch": "nodemon server.js --dev",
+    "build": "echo 'No build step required for CDN-based React app'",
+    "serve": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["neo4j", "graph", "visualization", "react", "cytoscape"],
+  "author": "NeoBoi Team",
+  "license": "MIT"
+}

@@ -1,39 +1,40 @@
 {
-  "name": "neoboi",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
-  },
+  "name": "neo4j-graph-vis-app",
+  "version": "1.0.0",
+  "description": "Clean Neo4j Graph Visualization Application with Express backend and React frontend",
+  "main": "frontend/server.js",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev:backend": "nodemon frontend/server.js",
+    "start": "node frontend/server.js",
+    "dev": "npm run dev:backend"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "keywords": [
+    "neo4j",
+    "graph",
+    "visualization"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@neo4j-ndl/base": "^3.7.7",
+    "cors": "^2.8.5",
+    "cytoscape": "^3.32.0",
+    "cytoscape-fcose": "^2.2.0",
+    "cytoscape-popper": "^4.0.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "neo4j-driver": "^5.15.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-cytoscapejs": "^2.0.0",
+    "react-tippy": "^1.4.0",
+    "vis-network": "^9.1.9",
+    "solr-client": "^0.7.1",
+    "ollama": "^0.5.0",
+    "axios": "^1.6.0"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }
