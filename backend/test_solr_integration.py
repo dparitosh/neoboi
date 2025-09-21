@@ -6,7 +6,9 @@ import asyncio
 import requests
 import json
 from solr_service import solr_service
-from neo4j_service import neo4j_service
+from neo4j_service import get_neo4j_service
+
+neo4j_service = get_neo4j_service()
 
 async def test_solr_integration():
     """Test the Solr integration"""
@@ -66,7 +68,7 @@ async def test_solr_integration():
 
     # Test 6: Test API endpoints (if server is running)
     try:
-        response = requests.get("http://127.0.0.1:3001/api/solr/stats", timeout=5)
+        response = requests.get(os.getenv("BACKEND_API_URL", "http://127.0.0.1:3001") + "/api/solr/stats", timeout=5)
         if response.status_code == 200:
             stats = response.json()
             print("✅ API Endpoint Test")

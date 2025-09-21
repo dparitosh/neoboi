@@ -1,363 +1,458 @@
-# Neo4j Graph Visualization App
+# NeoBoi - Integrated Knowledge Graph & Search Platform
 
-A modern web application for visualizing Neo4j graph databases with Apache Solr search integration and separate microservices architecture.
+A comprehensive document processing and knowledge graph application that seamlessly integrates **Apache Solr's inverted indexing**, **Neo4j's graph database and vector search**, and **offline LLM orchestration** for intelligent document analysis, contextual search, and conversational AI.
 
-## Architecture
+## ✅ Codebase Status
 
-This application consists of four separate services:
+**🟢 CLEAN & READY** - Comprehensive code review completed on September 21, 2025
+- ✅ All syntax errors fixed
+- ✅ All import errors resolved  
+- ✅ All Python files pass compilation
+- ✅ All services import successfully
+- ✅ No duplicate files found
+- ✅ Ready for development and deployment
 
-- **Frontend Service** (Port 3000): React-based web interface with Express server
-- **Backend API Service** (Port 3001): Python FastAPI server with Neo4j integration
-- **Apache Solr** (Port 8983): Search engine for graph data indexing
-- **Neo4j Database** (Port 7687): Graph database (local or cloud)
+### Recent Fixes Applied
+- Fixed Python syntax errors (await outside async function)
+- Resolved import path issues across all modules
+- Updated module imports to use proper relative paths
+- Fixed test file issues and missing dependencies
+- Cleaned up codebase with no remaining errors
 
-**🔥 All Solr search and query services are implemented in Python using FastAPI framework.**
+---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
+Before running NeoBoi, you need to set up the following services:
 
-- Node.js 16+ (for frontend service)
-- Python 3.8+ (for backend service)
-- Java 11+ (for Apache Solr)
-- Neo4j database (local or cloud instance)
+1. **Neo4j Aura** (Cloud Graph Database) - Version 5.17.0+
+   - Create account at: https://neo4j.com/cloud/aura/
+   - Free tier available for development
+2. **Apache Solr** (Search Engine) - Version 9.4.1+
+3. **Apache Tika** (Document Parser) - Version 2.9.1+
+4. **Tesseract OCR** (Optical Character Recognition) - Version 5.3.0+
+5. **Ollama** (Offline LLM) - Version 0.1.0+
 
 ### Installation
 
-1. **Install Dependencies:**
-   ```bash
-   # Frontend dependencies
-   cd frontend
-   npm install
+#### 1. Setup Neo4j Aura
+1. Visit https://neo4j.com/cloud/aura/
+2. Create a free account and new AuraDB instance
+3. Note the connection URI, username, and password
 
-   # Backend dependencies (already configured)
-   cd ../backend
-   pip install -r requirements.txt
-   ```
+#### 2. Install Required Services
+Follow the detailed installation guides in `docs/installation/`:
 
-2. **Start Services Independently:**
+- [Neo4j Aura Configuration](docs/installation/neo4j-installation.md)
+- [Apache Solr Installation Guide](docs/installation/solr-installation.md)
+- [Apache Tika Installation Guide](docs/installation/tika-installation.md)
+- [Tesseract OCR Installation Guide](docs/installation/tesseract-installation.md)
 
-   **Option A: Start Frontend Only**
-   ```bash
-   cd frontend
-   npm start
-   # Frontend will be available at http://localhost:3000
-   ```
-
-   **Option B: Start Backend Only**
-   ```bash
-   ./install/start.ps1
-   # Backend API will be available at http://localhost:3001
-   ```
-
-   **Option C: Start Both Services**
-   ```bash
-   ./install/start-all.ps1
-   # Frontend: http://localhost:3000
-   # Backend: http://localhost:3001
-   ```
-
-3. **Access the Application:**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:3001
-   - Solr Admin: http://localhost:8983
-
-## Service Management
-
-### Individual Services
-
-**Frontend Service (Port 3000):**
+#### 2. Clone and Setup Application
 ```bash
-# Start frontend only
-cd frontend
-npm start
+git clone <repository-url>
+cd neoboi
 
-# Or use the script
-./install/start-frontend.ps1
-```
-
-**Backend API Service (Port 3001):**
-```bash
-# Start backend only
-./install/start.ps1
-
-# Or directly
+# Install Python dependencies
 cd backend
-python main.py
+pip install -r requirements.txt
+
+# Install Node.js dependencies
+cd frontend
+npm install
 ```
 
-**Solr Search Service (Port 8983):**
+#### 3. Configure Environment
+Copy and update the environment file:
 ```bash
-# Start Solr service
-./start-solr.bat
-
-# Stop Solr service
-./stop-solr.bat
-
-# Check Solr status
-./status-solr.bat
-
-# Unified management
-./solr-service.bat start
-./solr-service.bat stop
-./solr-service.bat status
-./solr-service.bat restart
+cp .env.example .env.local
+# Edit .env.local with your service configurations
 ```
 
-### Start All Services Together
-
-If you want to start both services together:
+#### 4. Setup Services
 ```bash
-./install/start-all.ps1  # PowerShell
-start-all.bat           # Windows Batch
+# From project root
+powershell .\scripts\services\setup-services.ps1
 ```
 
-### Check Status
-
+#### 5. Start Application
 ```bash
-# Check all services
-./install/status.ps1
-./install/status.bat
+# Start all services
+powershell .\scripts\services\start-all.ps1
 
-# Test all services including Solr API
-./test-services.bat
-
-# Test Solr API specifically
-./test-solr-api.bat
+# Or start individually
+powershell .\scripts\services\start-backend.ps1
+powershell .\scripts\services\start-frontend.ps1
 ```
 
-### Initialize Solr Collection
+## � How to Upload Files
 
-Before using Solr search features, initialize the collection:
-```bash
-./init-solr-collection.bat
+### Method 1: Direct Upload on Main Page (Recommended)
+The main application page now includes integrated file upload functionality:
+
+1. **Navigate to the main page:**
+   ```
+   http://localhost:3000
+   ```
+
+2. **Click "Upload Files" button** in the Knowledge Graph header
+   - This expands a collapsible upload panel above the graph
+
+3. **Upload Process:**
+   - **Drag & Drop**: Drag files directly onto the upload area
+   - **Click to Browse**: Click the upload area to select files manually
+   - **Supported Formats**: PDF, DOCX, TXT, PNG, JPG, JPEG
+   - **File Size Limit**: 50MB per file
+   - **Batch Upload**: Upload multiple files simultaneously
+
+4. **Real-time Processing:**
+   - Files are processed using **Tika** for text extraction
+   - Content is **chunked** and **embedded** for vector search
+   - Data is stored in **Neo4j** with graph relationships
+   - Files are indexed in **Solr** for keyword search
+   - Graph automatically refreshes after upload completion
+
+5. **Monitor Progress:**
+   - Upload progress shown for each file
+   - Processing status indicators
+   - Success/error feedback
+   - Automatic graph refresh when complete
+
+### Method 2: Dedicated Upload Page
+For advanced document management features:
+
+1. **Navigate to the upload page:**
+   ```
+   http://localhost:3000/unstructured
+   ```
+
+2. **Use the comprehensive upload interface** with additional features:
+   - Document search and analysis
+   - Service status monitoring
+   - File management tools
+
+### What Happens After Upload
+
+When you upload files, they go through this integrated pipeline:
+
+1. **Text Extraction** (Tika Server)
+   - Extracts text from PDFs, images, documents
+   - Handles OCR for images using Tesseract
+
+2. **Content Processing**
+   - Splits documents into manageable chunks
+   - Generates vector embeddings for semantic search
+
+3. **Multi-System Indexing**
+   - **Solr**: Creates inverted indexes for keyword search
+   - **Neo4j**: Stores chunks with vector embeddings and graph relationships
+
+4. **Graph Integration**
+   - Neo4j creates knowledge graph from processed content
+   - Links entities and relationships across documents
+
+5. **Search Readiness**
+   - Files become immediately searchable through:
+     - **Unified Search**: `/api/search/integrated` endpoint
+     - **Chat Interface**: Conversational queries
+     - **Graph Exploration**: Visual relationship browsing
+
+### Quick Upload Workflow
+1. **Open main page** → Click "Upload Files"
+2. **Drag/drop or select files** → Watch progress indicators
+3. **Wait for processing** → Graph automatically updates
+4. **Start chatting** → Ask questions about uploaded content
+5. **Explore relationships** → Navigate the knowledge graph
+
+## �📋 Integrated Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    DOCUMENT INGESTION PIPELINE                   │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐ │
+│  │   Apache Tika   │    │  Tesseract OCR  │    │   Text Chunking │ │
+│  │ Document Parser │───►│   Image Text    │───►│  & Embeddings   │ │
+│  │   Port: 9998    │    │   Extraction    │    │  (Neo4j Store)  │ │
+│  └─────────────────┘    └─────────────────┘    └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      SEARCH & GRAPH INTEGRATION                  │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐ │
+│  │   Apache Solr   │    │     Neo4j       │    │   Offline LLM   │ │
+│  │ Inverted Index  │◄──►│ Graph Database │◄──►│  Orchestration   │ │
+│  │   Port: 8983    │    │  + Vector Search│    │   Port: 11434   │ │
+│  └─────────────────┘    └─────────────────┘    └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                                    │
+                                    ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      APPLICATION LAYER                           │
+│  ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐ │
+│  │   Frontend      │    │   Backend       │    │   Chat & Search │ │
+│  │   (React)       │◄──►│   (FastAPI)     │◄──►│   Interface      │ │
+│  │   Port: 3000    │    │   Port: 3001    │    │                 │ │
+│  └─────────────────┘    └─────────────────┘    └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Configuration
+### Data Flow Architecture
 
-### Environment Variables
+1. **Document Processing** → **Solr Indexing** → **Neo4j Graph Creation**
+2. **User Query** → **LLM Understanding** → **Multi-System Search**
+3. **Contextual Results** → **Graph Visualization** → **Conversational Responses**
 
-Create a `.env.local` file in the root directory:
+### Component Integration
 
-```bash
-# Neo4j Configuration
+- **Solr**: Creates inverted indexes from unstructured pipeline (Tika + Tesseract)
+- **Neo4j**: Uses Solr indexes for graph creation, stores structured data, provides vector similarity search
+- **LLM**: Orchestrates search across both systems, provides contextual NLP responses
+- **All Search Types**: Keyword (Solr), Semantic (Neo4j vectors), Hybrid (combined), Conversational (LLM)
+
+### Success Metrics
+- **Contextual Accuracy**: NLP queries return relevant results
+- **Performance**: Sub-second response times across all search types
+- **Consistency**: Unified experience across keyword, semantic, and conversational search
+
+## 🔧 Configuration
+
+## 🔧 Configuration
+
+### Environment Variables (.env.local)
+```env
+# Neo4j Configuration (Supports both Aura Cloud and On-Premise)
+# For Neo4j Aura (Cloud) - RECOMMENDED:
 NEO4J_URI=neo4j+s://your-instance.databases.neo4j.io
 NEO4J_USER=neo4j
-NEO4J_PASSWORD=your-password
+NEO4J_PASSWORD=your_password
 NEO4J_DATABASE=neo4j
 
-# Service Configuration
-FRONTEND_PORT=3000
-BACKEND_URL=http://localhost:3001
+# For On-Premise Neo4j (alternative):
+# NEO4J_URI=bolt://localhost:7687
+# NEO4J_USER=neo4j
+# NEO4J_PASSWORD=your_local_password
+# NEO4J_DATABASE=neo4j
 
 # Solr Configuration
-SOLR_HOME="D:\Software\solr-9.9.0"
+SOLR_HOME="/path/to/solr"
 SOLR_PORT="8983"
-SOLR_BIN_PATH="D:\Software\solr-9.9.0\bin"
+SOLR_BIN_PATH="/path/to/solr/bin"
 SOLR_URL="http://localhost:8983/solr"
 SOLR_COLLECTION="neoboi_graph"
-SOLR_START_COMMAND="cmd /c solr.cmd start"
-SOLR_STOP_COMMAND="cmd /c solr.cmd stop"
-SOLR_STATUS_COMMAND="cmd /c solr.cmd status"
+SOLR_START_COMMAND="solr start"
+SOLR_STOP_COMMAND="solr stop"
+SOLR_STATUS_COMMAND="solr status"
+
+# Service Ports
+BACKEND_PORT="3001"
+FRONTEND_PORT="3000"
+TEST_SERVER_PORT="3002"
+
+# External Services
+OLLAMA_HOST="http://localhost:11434"
+OLLAMA_DEFAULT_MODEL="llama2:7b"
+OLLAMA_PATH="$env:USERPROFILE\AppData\Local\Programs\Ollama\ollama.exe"
+
+TIKA_SERVER_URL="http://localhost:9998"
+
+# CORS Configuration
+CORS_ALLOWED_ORIGINS="http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001"
+
+# Logging
+LOG_LEVEL="INFO"
+
+# Development Settings
+DEBUG="true"
+ENVIRONMENT="development"
 ```
 
-### Service Ports
-
-- Frontend: 3000 (configurable via FRONTEND_PORT)
-- Backend: 3001 (configurable via PORT)
-- Solr: 8983 (configurable via SOLR_PORT)
-- Neo4j: 7687 (default)
-
-## Features
-
-- **Interactive Graph Visualization:** Using Cytoscape.js with modern React
-- **Real-time Search:** Apache Solr integration for full-text search
-- **Natural Language Queries:** AI-powered Cypher query generation
-- **Microservices Architecture:** Separate, independently scalable services
-- **Professional UI:** Clean, responsive design
-- **RESTful API:** Well-documented endpoints
-- **Health Monitoring:** Built-in service health checks
-
-## API Documentation
-
-### Backend Endpoints
-
-**Graph Operations:**
-- `GET /health` - Service health check
-- `GET /api/graph` - Get graph data from Neo4j
-- `GET /api/graph/all` - Get expanded graph data
-- `GET /api/graph/expand/:nodeId` - Expand graph from specific node
-- `GET /api/graph/search` - Search graph with filters
-
-**Solr Search Operations:**
-- `GET /api/solr/stats` - Get Solr index statistics
-- `POST /api/solr/index` - Index current graph data into Solr
-- `GET /api/solr/search` - Search indexed data with filters
-- `POST /api/solr/clear` - Clear Solr index
-
-**Query Operations:**
-- `POST /api/chat` - Process natural language queries
-- `POST /api/query` - Execute custom Cypher queries
-
-### Solr Search API Examples
-
-```bash
-# Index current graph data
-curl -X POST http://localhost:3001/api/solr/index
-
-# Search for suppliers
-curl "http://localhost:3001/api/solr/search?q=supplier&type=node"
-
-# Search with pagination
-curl "http://localhost:3001/api/solr/search?q=test&limit=10&offset=0"
-
-# Get search statistics
-curl http://localhost:3001/api/solr/stats
-
-# Clear search index
-curl -X POST http://localhost:3001/api/solr/clear
-```
-
-### Frontend Features
-
-- Interactive graph visualization with Cytoscape.js
-- Real-time search with Apache Solr
-- Natural language query processing
-- Node expansion and relationship exploration
-- Responsive design for all devices
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 neoboi/
-├── backend/              # Python FastAPI backend service
-│   ├── main.py          # Main FastAPI application
-│   ├── routes.py        # API endpoints
-│   ├── neo4j_service.py # Neo4j database integration
-│   ├── solr_service.py  # Apache Solr integration
-│   └── requirements.txt # Python dependencies
-├── frontend/             # React frontend service
-│   ├── server.js        # Express server for frontend
-│   ├── static/          # Static assets (JS, CSS)
-│   ├── templates/       # HTML templates
-│   └── package.json     # Node.js dependencies
-├── install/              # Service management scripts
-│   ├── start*.ps1/bat   # Start scripts for all services
-│   ├── stop*.ps1/bat    # Stop scripts for all services
-│   ├── status*.ps1/bat  # Status checking scripts
-│   └── restart*.ps1/bat # Restart scripts
-├── start-solr.bat       # Start Solr service
-├── stop-solr.bat        # Stop Solr service
-├── status-solr.bat      # Check Solr status
-├── restart-solr.bat     # Restart Solr service
-├── solr-service.bat     # Unified Solr management
-├── init-solr-collection.bat # Initialize Solr collection
-├── test-solr-api.bat    # Test Solr API endpoints
-├── test-services.bat    # General service health check
-├── solr-api-examples.bat # Interactive Solr API examples
-├── SOLR-README.md       # Solr service management guide
-├── SOLR-API-DOCUMENTATION.md # Complete Solr API documentation
-└── .env.local           # Environment configuration
+├── docs/
+│   └── installation/           # Service installation guides
+├── scripts/
+│   └── services/              # Service management scripts
+├── backend/                   # Python FastAPI backend
+│   ├── neo4j_service.py       # Neo4j Aura integration & GraphRAG
+│   ├── solr_service.py        # Solr integration
+│   ├── tika_service.py        # Tika integration
+│   └── requirements.txt       # Python dependencies
+├── frontend/                  # React frontend application
+│   ├── src/
+│   ├── public/
+│   └── package.json
+├── .env.local                # Environment configuration
+└── README.md                 # This file
 ```
 
-## Troubleshooting
+## 🚀 Service Management
+
+### Start Services
+```bash
+# Start all services
+.\scripts\services\start-all.ps1
+
+# Start individual services
+.\scripts\services\start-solr.ps1
+.\scripts\services\start-backend.ps1
+.\scripts\services\start-frontend.ps1
+```
+
+### Stop Services
+```bash
+# Stop all services
+.\scripts\services\stop.ps1
+
+# Stop individual services
+.\scripts\services\stop-backend.ps1
+.\scripts\services\stop-frontend.ps1
+```
+
+### Check Status
+```bash
+.\scripts\services\status.ps1
+```
+
+## 🔍 Key Features
+
+### Integrated Multi-System Search
+- **Solr Inverted Indexing**: Full-text search over unstructured content processed through Tika/Tesseract pipeline
+- **Neo4j Graph Search**: Structured data mapping with unstructured content, vector similarity search
+- **LLM Orchestration**: Intelligent query understanding and multi-system search coordination
+- **Hybrid Search**: Combines keyword (Solr) + semantic (Neo4j) + conversational (LLM) approaches
+
+### Document Processing Pipeline
+1. **Upload**: Support for PDF, DOCX, images, and more
+2. **OCR**: Extract text from images using Tesseract
+3. **Parsing**: Extract metadata and content with Apache Tika
+4. **Chunking**: Intelligent text chunking for optimal retrieval (1000 chars, 200 overlap)
+5. **Embeddings**: Generate vector embeddings for semantic search
+6. **Dual Indexing**: Store in both Solr (keyword) and Neo4j (vector/graph)
+7. **Graph Creation**: Neo4j uses Solr-processed content to build knowledge graphs
+8. **Search Integration**: LLM orchestrates search across all systems
+
+### Intelligent Analysis
+- **Entity Extraction**: Identify people, organizations, dates, locations
+- **Relationship Mining**: Discover connections between entities
+- **Topic Modeling**: Automatic categorization and clustering
+- **Sentiment Analysis**: Understand document tone and context
+- **Cross-Document Analysis**: Find patterns across multiple documents
+- **GraphRAG**: Retrieval-Augmented Generation using Neo4j's vector capabilities
+
+### AI-Powered Features
+- **Offline LLM Integration**: Ollama-powered chat and analysis (no API costs)
+- **Natural Language Queries**: Convert conversational queries to multi-system searches
+- **Contextual Responses**: Graph-aware, conversationally appropriate replies
+- **Intelligent Routing**: Automatic selection of optimal search strategy
+- **Query Enhancement**: LLM improves search queries for better results
+
+## 🧪 Testing
+
+### Run Tests
+```bash
+# Backend tests
+cd backend
+python -m pytest
+
+# Frontend tests
+cd ../my-react-frontend
+npm test
+```
+
+### Integration Testing
+```bash
+# Test end-to-end workflow
+python backend/test_integration.py
+```
+
+## 📊 Monitoring
+
+### Health Checks
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:3001
+- API Documentation: http://localhost:3001/docs
+- Neo4j Aura Browser: https://your-instance.databases.neo4j.io/browser/
+- Solr Admin: http://localhost:8983
+
+### Logs
+- Backend: `backend/logs/app.log`
+- Neo4j Aura: Available in Neo4j Aura console/dashboard
+- Solr: `%SOLR_HOME%\server\logs\solr.log`
+
+## 🔒 Security
+
+### Best Practices
+- Change default passwords for all services
+- Use HTTPS in production
+- Implement proper authentication
+- Regular security updates
+- File upload validation
+- Rate limiting
+
+## 🐛 Troubleshooting
 
 ### Common Issues
 
-1. **Port Conflicts:**
-   - Check if ports 3000, 3001, 8983 are available
-   - Use `netstat -ano | findstr :PORT` to check port usage
+#### Services Won't Start
+1. Check if ports are available: `netstat -ano | findstr :PORT`
+2. Verify environment variables in `.env.local`
+3. Check service logs for error messages
+4. Ensure Java is installed (required for Solr/Tika)
 
-2. **Service Won't Start:**
-   - Ensure all dependencies are installed
-   - Check environment variables in `.env.local`
-   - Review service logs
+#### Neo4j Aura Connection Errors
+1. Verify NEO4J_URI, NEO4J_USER, and NEO4J_PASSWORD in `.env.local`
+2. Check Neo4j Aura instance is running and accessible
+3. Ensure your IP is whitelisted in Neo4j Aura dashboard
+4. Verify Neo4j Aura instance supports vector indexes (v5.17.0+)
 
-3. **Neo4j Connection Issues:**
-   - Verify Neo4j credentials in `.env.local`
-   - Ensure Neo4j is running and accessible
-   - Check network connectivity for cloud instances
+#### Connection Errors
+1. Verify service URLs in `.env.local`
+2. Check firewall settings
+3. Ensure services are running: `.\scripts\services\status.ps1`
 
-4. **Solr Issues:**
-   - **Solr won't start:** Ensure Java 11+ is installed and in PATH
-   - **Collection not found:** Run `./init-solr-collection.bat` to create the collection
-   - **Search not working:** Ensure data is indexed using `/api/solr/index`
-   - **Connection refused:** Verify Solr is running on port 8983
-   - **Indexing fails:** Check Neo4j connectivity and data availability
+#### OCR Issues
+1. Verify Tesseract installation: `tesseract --version`
+2. Check language data: `tesseract --list-langs`
+3. Test with sample image
 
-### Service Logs
+### Getting Help
+1. Check the [Integration Guide](docs/installation/integration-guide.md)
+2. Review service-specific installation guides
+3. Check logs for detailed error messages
+4. Verify all prerequisites are met
 
-- Backend logs: Console output when starting backend service
-- Frontend logs: Browser developer console + server console
-- Solr logs: `solr/server/logs/solr.log`
-- Neo4j logs: Neo4j admin interface
+## 📚 Documentation
 
-### Solr-Specific Troubleshooting
+- [Integration Guide](docs/installation/integration-guide.md)
+- [Neo4j Installation](docs/installation/neo4j-installation.md)
+- [Solr Installation](docs/installation/solr-installation.md)
+- [Tika Installation](docs/installation/tika-installation.md)
+- [Tesseract Installation](docs/installation/tesseract-installation.md)
 
-```bash
-# Check Solr status
-./status-solr.bat
-
-# Initialize collection if missing
-./init-solr-collection.bat
-
-# Test Solr API endpoints
-./test-solr-api.bat
-
-# View Solr admin interface
-# Open: http://localhost:8983
-```
-
-### Environment Variable Issues
-
-If services fail to start due to environment variables:
-1. Verify `.env.local` exists in the root directory
-2. Check that all required variables are set
-3. Ensure no extra spaces or quotes in variable values
-4. Restart services after changing environment variables
-
-## Development
-
-### Adding New Features
-
-1. **Backend Features:**
-   - Add routes in `backend/routes.py`
-   - Implement business logic in service files
-   - Update dependencies in `backend/requirements.txt`
-
-2. **Frontend Features:**
-   - Modify `frontend/static/app-simple.js`
-   - Update HTML in `frontend/templates/index.html`
-   - Add dependencies to `frontend/package.json`
-
-3. **Service Scripts:**
-   - Update scripts in `install/` directory
-   - Test on both Windows (PowerShell/Batch) and Unix systems
-
-### Environment Setup
-
-Create a `.env.local` file in the root directory:
-
-```bash
-# Neo4j Configuration
-NEO4J_URI=neo4j+s://your-instance.databases.neo4j.io
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=your-password
-NEO4J_DATABASE=neo4j
-
-# Frontend Configuration
-FRONTEND_PORT=3000
-BACKEND_URL=http://localhost:3001
-```
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Test all services using `./install/status.ps1`
+4. Add tests for new functionality
 5. Submit a pull request
 
-## License
+## 📄 License
 
-MIT License - see LICENSE file for details
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Support
+
+For support and questions:
+- Check the troubleshooting section above
+- Review the installation guides
+- Check service documentation
+- Open an issue on GitHub
+
+---
+
+**Note**: This application requires Neo4j Aura (cloud database), Apache Solr, Apache Tika, and Tesseract OCR. Please follow the installation guides in the `docs/installation/` directory before running the application. Neo4j Aura provides vector index support for GraphRAG functionality.

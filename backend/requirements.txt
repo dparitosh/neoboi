@@ -3,7 +3,7 @@ fastapi==0.104.1
 uvicorn[standard]==0.24.0
 pydantic==2.5.0
 
-# Neo4j driver
+# Neo4j driver with vector support
 neo4j==5.17.0
 
 # HTTP requests for Solr integration
@@ -12,6 +12,10 @@ requests==2.31.0
 # Additional utilities
 python-dotenv==1.0.0
 jinja2==3.1.2
+
+# Neo4j GraphRAG dependencies
+sentence-transformers==2.2.2
+numpy==1.24.3
 
 # Optional: For future LLM integration
 # torch>=2.0.0

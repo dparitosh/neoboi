@@ -13,6 +13,14 @@ const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 app.use(cors());
 app.use(express.json());
 
+// Set MIME type for JSX files
+app.use((req, res, next) => {
+    if (req.url.endsWith('.jsx')) {
+        res.setHeader('Content-Type', 'application/javascript');
+    }
+    next();
+});
+
 // Development mode: Add request logging
 if (isDev) {
     app.use((req, res, next) => {
@@ -24,6 +32,7 @@ if (isDev) {
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'static')));
+app.use('/src', express.static(path.join(__dirname, 'src')));
 
 // API proxy to backend
 app.use('/api', (req, res) => {
@@ -58,6 +67,11 @@ app.use('/api', (req, res) => {
 });
 
 // Serve the main HTML file for all non-API routes
+app.get('/unstructured', (req, res) => {
+    res.sendFile(path.join(__dirname, 'templates', 'unstructured.html'));
+});
+
+// Serve the main HTML file for all other non-API routes (excluding static files)
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'templates', 'index.html'));
 });

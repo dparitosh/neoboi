@@ -44,7 +44,8 @@ async def index_graph_data():
         logger.info("Starting Solr indexing process")
 
         # Import here to avoid circular imports
-        from neo4j_service import neo4j_service
+        from neo4j_service import get_neo4j_service
+        neo4j_service = get_neo4j_service()
 
         # Get current graph data from Neo4j
         graph_data = await neo4j_service.get_graph_data()

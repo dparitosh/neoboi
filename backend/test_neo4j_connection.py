@@ -1,7 +1,8 @@
 import asyncio
-from neo4j_service import neo4j_service
+from neo4j_service import get_neo4j_service
 
 async def check_neo4j():
+    neo4j_service = get_neo4j_service()
     try:
         await neo4j_service.initialize_driver()
         result = await neo4j_service.get_graph_data()

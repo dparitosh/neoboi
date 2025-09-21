@@ -5,10 +5,11 @@ Test script to verify Python backend and frontend integration
 import requests
 import json
 import time
+import os
 
 def test_backend_integration():
     """Test the Python backend API endpoints"""
-    base_url = "http://127.0.0.1:3001"
+    base_url = os.getenv("BACKEND_API_URL", "http://127.0.0.1:3001")
 
     print("🧪 Testing Python Backend Integration")
     print("=" * 50)

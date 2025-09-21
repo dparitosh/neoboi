@@ -3,7 +3,7 @@ import json
 import logging
 import os
 from typing import Dict, List, Any, Optional
-from neo4j_service import neo4j_service
+# Removed circular import: from neo4j_service import neo4j_service
 
 logger = logging.getLogger(__name__)
 

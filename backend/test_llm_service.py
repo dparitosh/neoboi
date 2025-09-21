@@ -7,11 +7,12 @@ import requests
 import json
 import time
 import sys
+import os
 
 def test_python_llm_service():
     """Test the Python LLM service functionality"""
 
-    base_url = "http://127.0.0.1:8000"
+    base_url = os.getenv("BACKEND_API_URL", "http://127.0.0.1:8000")
 
     print("Testing Python LLM Service")
     print("=" * 30)

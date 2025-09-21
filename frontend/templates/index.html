@@ -13,6 +13,9 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     
+    <!-- Babel for JSX transpilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
     <!-- Cytoscape core only - no problematic extensions -->
     <script src="https://unpkg.com/cytoscape@3.32.0/dist/cytoscape.min.js"></script>
 </head>
@@ -23,7 +26,7 @@
         </div>
     </div>
 
-    <!-- Simple app without complex dependencies -->
-    <script src="app-simple.js"></script>
+    <!-- Main React App - Load the full application -->
+    <script src="/static/app-simple.js"></script>
 </body>
 </html>
