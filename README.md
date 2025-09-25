@@ -23,6 +23,8 @@ A comprehensive document processing and knowledge graph application that seamles
 
 ## 🚀 Quick Start
 
+For a full walkthrough with screenshots and troubleshooting tips, see [`INSTALLATION.md`](./INSTALLATION.md).
+
 ### Prerequisites
 Before running NeoBoi, you need to set up the following services:
 
@@ -49,44 +51,41 @@ Follow the detailed installation guides in `docs/installation/`:
 - [Apache Tika Installation Guide](docs/installation/tika-installation.md)
 - [Tesseract OCR Installation Guide](docs/installation/tesseract-installation.md)
 
-#### 2. Clone and Setup Application
-```bash
+#### 2. Clone and Prepare the Application
+```powershell
 git clone <repository-url>
 cd neoboi
-
-# Install Python dependencies
-cd backend
-pip install -r requirements.txt
-
-# Install Node.js dependencies
-cd frontend
-npm install
 ```
 
-#### 3. Configure Environment
-Copy and update the environment file:
-```bash
-cp .env.example .env.local
-# Edit .env.local with your service configurations
+#### 3. Configure the Environment
+```powershell
+Copy-Item .env.example .env.local
+# Then edit .env.local with your Neo4j/Solr/Tika/Ollama settings
 ```
 
-#### 4. Setup Services
-```bash
-# From project root
-powershell .\scripts\services\setup-services.ps1
+#### 4. Run Setup Scripts (from the project root)
+```powershell
+# Verify prerequisites and external services
+powershell -ExecutionPolicy Bypass -File .\scripts\services\setup-services.ps1
+
+# Create or refresh the backend virtual environment (run in cmd.exe)
+cmd /c scripts\services\setup-python-llm.bat
+
+# Install frontend deps and remind to pull Ollama models (run in cmd.exe)
+cmd /c scripts\services\setup-offline-llm.bat
 ```
 
-#### 5. Start Application
-```bash
+#### 5. Start the Application
+```powershell
 # Start all services
-powershell .\scripts\services\start-all.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\services\start-all.ps1
 
 # Or start individually
-powershell .\scripts\services\start-backend.ps1
-powershell .\scripts\services\start-frontend.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\services\start-backend.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\services\start-frontend.ps1
 ```
 
-## � How to Upload Files
+## 📤 How to Upload Files
 
 ### Method 1: Direct Upload on Main Page (Recommended)
 The main application page now includes integrated file upload functionality:
@@ -165,7 +164,7 @@ When you upload files, they go through this integrated pipeline:
 4. **Start chatting** → Ask questions about uploaded content
 5. **Explore relationships** → Navigate the knowledge graph
 
-## �📋 Integrated Architecture
+## 📋 Integrated Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐

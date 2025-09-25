@@ -1,10 +1,14 @@
-# Setup Solr Services (Pre-installed)
-Write-Host "Setting up Apache Solr services..." -ForegroundColor Green
+# Guided setup helper for NeoBoi prerequisites and local services
+Write-Host "=== NeoBoi Guided Services Setup ===" -ForegroundColor Magenta
+Write-Host "This script verifies prerequisites and highlights any missing steps." -ForegroundColor Gray
 Write-Host ""
 
-# Change to script directory and navigate to root
+# Change to script directory and navigate to project root
 Set-Location $PSScriptRoot
 Set-Location ..\..
+$projectRoot = Get-Location
+Write-Host "Project root: $projectRoot" -ForegroundColor Cyan
+Write-Host ""
 
 # Load environment variables
 $envPath = ".env.local"
@@ -16,6 +20,21 @@ if (Test-Path $envPath) {
     if ($configuredPath) {
         $solrPath = $configuredPath
     }
+}
+
+function Test-CommandExists {
+    param(
+        [Parameter(Mandatory = $true)][string]$Command,
+        [Parameter(Mandatory = $true)][string]$FriendlyName
+    )
+
+    if (Get-Command $Command -ErrorAction SilentlyContinue) {
+        Write-Host "[ ok  ] $FriendlyName detected ($Command)" -ForegroundColor Green
+        return $true
+    }
+
+    Write-Host "[ warn] $FriendlyName not found in PATH. Install it before continuing." -ForegroundColor Yellow
+    return $false
 }
 
 # Function to verify Solr installation
@@ -96,7 +115,7 @@ function Initialize-SolrCore {
 
     # Check if Solr is running
     try {
-        $response = Invoke-WebRequest -Uri "http://localhost:8983/solr/admin/info/system" -TimeoutSec 5 -ErrorAction Stop
+        Invoke-WebRequest -Uri "http://localhost:8983/solr/admin/info/system" -TimeoutSec 5 -ErrorAction Stop | Out-Null
         Write-Host "Solr is running. Checking for 'neoboi' core..." -ForegroundColor Green
 
         # Check if neoboi core exists
@@ -133,50 +152,110 @@ function Test-TikaServer {
 }
 
 # Main setup process
-Write-Host "=== NeoBoi Services Setup ===" -ForegroundColor Magenta
+Write-Host "Step 1/5: Checking prerequisite CLI tools" -ForegroundColor Magenta
+$cliChecks = @(
+    @{ Name = "Python"; Command = "python" },
+    @{ Name = "Pip"; Command = "pip" },
+    @{ Name = "Node.js"; Command = "node" },
+    @{ Name = "npm"; Command = "npm" },
+    @{ Name = "Java"; Command = "java" },
+    @{ Name = "Ollama (optional for offline LLM)"; Command = "ollama" }
+)
+
+$missingTools = @()
+foreach ($cli in $cliChecks) {
+    if (-not (Test-CommandExists -Command $cli.Command -FriendlyName $cli.Name)) {
+        $missingTools += $cli.Name
+    }
+}
+if ($missingTools.Count -eq 0) {
+    Write-Host "All required command-line tools were detected." -ForegroundColor Green
+} else {
+    Write-Host ("The following tools still need attention: {0}" -f ($missingTools -join ", ")) -ForegroundColor Yellow
+}
 Write-Host ""
 
-# Verify all services
+Write-Host "Step 2/5: Environment configuration" -ForegroundColor Magenta
+if (Test-Path $envPath) {
+    Write-Host "[ ok  ] .env.local found." -ForegroundColor Green
+    if (Select-String -Path $envPath -Pattern "NEO4J_URI" -Quiet) {
+        Write-Host "         Core Neo4j settings detected." -ForegroundColor Gray
+    } else {
+        Write-Host "[warn] .env.local exists but Neo4j settings are missing. Review .env.example." -ForegroundColor Yellow
+    }
+} elseif (Test-Path ".env.example") {
+    Write-Host "[warn] .env.local not found. Copy the sample file before continuing:" -ForegroundColor Yellow
+    Write-Host "       Copy-Item .env.example .env.local" -ForegroundColor Cyan
+} else {
+    Write-Host "[warn] No environment file detected. Create .env.local using values from documentation." -ForegroundColor Yellow
+}
+Write-Host ""
+
+Write-Host "Step 3/5: Verifying external services" -ForegroundColor Magenta
 $solrPath = Test-SolrInstallation
 $tikaJarPath = Test-TikaInstallation
 $tesseractPath = Test-TesseractInstallation
 
-Write-Host ""
-Write-Host "=== Service Configuration ===" -ForegroundColor Magenta
-
-# Configure Solr if found
 if ($solrPath) {
     Initialize-SolrCore -solrPath $solrPath
 }
 
-# Test Tika if JAR found
 if ($tikaJarPath) {
     Test-TikaServer -tikaJarPath $tikaJarPath
 }
 
-# Test Tesseract
 if ($tesseractPath) {
     Write-Host "Tesseract OCR is ready for use." -ForegroundColor Green
 }
+Write-Host ""
+
+Write-Host "Step 4/5: Application dependency check" -ForegroundColor Magenta
+$backendVenv = Join-Path $projectRoot "backend\venv\Scripts\python.exe"
+$frontendModules = Join-Path $projectRoot "frontend\node_modules"
+
+if (Test-Path $backendVenv) {
+    Write-Host "[ ok  ] Backend virtual environment detected at backend\\venv." -ForegroundColor Green
+} else {
+    Write-Host "[warn] Backend virtual environment not found. Run scripts\\services\\setup-python-llm.bat" -ForegroundColor Yellow
+}
+
+if (Test-Path $frontendModules) {
+    Write-Host "[ ok  ] Frontend dependencies installed." -ForegroundColor Green
+} else {
+    Write-Host "[warn] Frontend node_modules missing. Run scripts\\services\\setup-offline-llm.bat" -ForegroundColor Yellow
+}
+Write-Host ""
+
+Write-Host "Step 5/5: Summary and next actions" -ForegroundColor Magenta
+if ($solrPath) {
+    Write-Host ("Solr Path: {0}" -f $solrPath) -ForegroundColor Green
+} else {
+    Write-Host "Solr Path: Not detected" -ForegroundColor Yellow
+}
+
+if ($tikaJarPath) {
+    Write-Host ("Tika JAR: {0}" -f $tikaJarPath) -ForegroundColor Green
+} else {
+    Write-Host "Tika JAR: Not detected" -ForegroundColor Yellow
+}
+
+if ($tesseractPath) {
+    Write-Host "Tesseract: Installed" -ForegroundColor Green
+} else {
+    Write-Host "Tesseract: Not detected" -ForegroundColor Yellow
+}
 
 Write-Host ""
-Write-Host "=== Setup Summary ===" -ForegroundColor Magenta
-Write-Host "Solr Path: $($solrPath ? $solrPath : 'Not found')" -ForegroundColor $(if ($solrPath) { 'Green' } else { 'Yellow' })
-Write-Host "Tika JAR: $($tikaJarPath ? $tikaJarPath : 'Not found')" -ForegroundColor $(if ($tikaJarPath) { 'Green' } else { 'Yellow' })
-Write-Host "Tesseract: $($tesseractPath ? 'Found' : 'Not found')" -ForegroundColor $(if ($tesseractPath) { 'Green' } else { 'Yellow' })
+Write-Host "Next Steps:" -ForegroundColor Magenta
+Write-Host "  1. Install any missing prerequisites listed above." -ForegroundColor White
+Write-Host "  2. Populate .env.local with your service credentials." -ForegroundColor White
+Write-Host "  3. Start background services (Solr, Tika, Ollama) using their respective commands." -ForegroundColor White
+Write-Host "  4. Launch the application: powershell -ExecutionPolicy Bypass -File .\\scripts\\services\\start-all.ps1" -ForegroundColor White
 
 Write-Host ""
-Write-Host "=== Next Steps ===" -ForegroundColor Magenta
-Write-Host "1. Ensure all services are installed (see docs/installation/)" -ForegroundColor White
-Write-Host "2. Start services in order:" -ForegroundColor White
-Write-Host "   - Solr: solr start -c" -ForegroundColor Cyan
-Write-Host "   - Tika: java -jar <tika-jar> --server --port 9998" -ForegroundColor Cyan
-Write-Host "3. Update .env.local with correct paths and credentials" -ForegroundColor White
-Write-Host "4. Run the application: .\scripts\services\start-all.ps1" -ForegroundColor White
-
-Write-Host ""
-Write-Host "For detailed installation guides, see:" -ForegroundColor Yellow
+Write-Host "More documentation:" -ForegroundColor Magenta
+Write-Host "  INSTALLATION.md" -ForegroundColor White
+Write-Host "  docs/installation/master-installation-guide.md" -ForegroundColor White
 Write-Host "  docs/installation/solr-installation.md" -ForegroundColor White
 Write-Host "  docs/installation/tika-installation.md" -ForegroundColor White
 Write-Host "  docs/installation/tesseract-installation.md" -ForegroundColor White
-Write-Host "  docs/installation/integration-guide.md" -ForegroundColor White

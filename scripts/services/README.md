@@ -1,57 +1,70 @@
 # Services Scripts Directory
 
-This directory contains all the service management scripts for the Neo4j GraphRAG application.
+This folder contains automation for setting up and running NeoBoi on Windows. Run every command from the repository root (`neoboi\`).
 
-## Core Service Scripts
+## 🚀 First-Time Setup Flow
 
-### Start Services
-- **`start-backend.ps1`** - Starts the Python FastAPI backend server (fixed version)
-- **`start-frontend.ps1`** - Starts the React frontend application  
-- **`start-neo4j.ps1`** - Neo4j database service management
-- **`start-solr.ps1`** - Starts Apache Solr search engine
-- **`start-all.ps1`** - Service launcher with instructions for all services
+1. **Verify prerequisites and external services**  
+	```powershell
+	powershell -ExecutionPolicy Bypass -File .\scripts\services\setup-services.ps1
+	```
+	The guided check confirms Python/Node/Java/Ollama availability, highlights missing tools, and validates Solr/Tika/Tesseract paths.
 
-### Stop Services
-- **`stop-backend.ps1`** - Stops the backend server
-- **`stop-frontend.ps1`** - Stops the frontend application
-- **`stop.ps1`** - General Node.js process stopper
+2. **Prepare the backend Python environment**  
+	```cmd
+	scripts\services\setup-python-llm.bat
+	```
+	Creates or updates `backend\venv`, installs `requirements.txt`, and verifies core packages can be imported.
 
-### Service Management
-- **`status.ps1`** - Comprehensive service status checker (improved version)
-- **`restart.ps1`** - Service restart utilities
-- **`service-utils.ps1`** - Shared utility functions for service management
+3. **Install Ollama models and frontend dependencies**  
+	```cmd
+	scripts\services\setup-offline-llm.bat
+	```
+	Runs `npm install` from `frontend\` and reminds you to pull the required Ollama models (for example `ollama pull llama2`).
 
-### Setup Scripts
-- **`setup-services.ps1`** - Service configuration and verification
-- **`setup-offline-llm.bat`** - LLM setup for offline mode
-- **`setup-python-llm.bat`** - Python LLM setup
+4. **Configure environment variables**  
+	Copy `.env.example` to `.env.local`, then fill in Neo4j, Solr, Tika, and Ollama values. Re-run the setup script to confirm everything is detected.
 
-### Specialized Services
-- **`ollama-service.ps1`** - Ollama LLM service management
-- **`start-frontend-only.ps1`** - Frontend-only startup option
+When each step reports success, use the start scripts below to launch the platform.
 
-## Usage
+## 🔁 Day-to-Day Operations
 
-### Quick Start
-1. Check service status: `.\scripts\services\status.ps1`
-2. Start backend: `.\scripts\services\start-backend.ps1`
-3. Start frontend: `.\scripts\services\start-frontend.ps1`
+- Start everything:  
+  ```powershell
+  powershell -ExecutionPolicy Bypass -File .\scripts\services\start-all.ps1
+  ```
+- Stop services: `powershell -ExecutionPolicy Bypass -File .\scripts\services\stop.ps1`
+- Check status: `powershell -ExecutionPolicy Bypass -File .\scripts\services\status.ps1`
+- Restart backend/frontend: `powershell -ExecutionPolicy Bypass -File .\scripts\services\restart.ps1`
 
-### Service URLs
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:3001
-- API Documentation: http://localhost:3001/docs
+## 📜 Script Catalogue
+
+### Startup
+- `start-all.ps1` – Launches Solr, backend, and frontend in the recommended order
+- `start-backend.ps1` – Runs the FastAPI backend via Uvicorn
+- `start-frontend.ps1` / `start-frontend-only.ps1` – Starts the React/Express UI
+- `start-solr.ps1` – Boots Solr using the configured `SOLR_HOME`
+- `start-neo4j.ps1` – Helper for local Neo4j Desktop installs
+
+### Shutdown & Monitoring
+- `stop.ps1`, `stop-backend.ps1`, `stop-frontend.ps1` – Graceful shutdown helpers
+- `status.ps1` – Aggregated health/status check
+- `restart.ps1` – Convenience wrapper to recycle backend/frontend
+
+### Setup Utilities
+- `setup-services.ps1` – Guided prerequisite and service verification
+- `setup-python-llm.bat` – Backend virtual environment bootstrap
+- `setup-offline-llm.bat` – Frontend dependencies and Ollama reminders
+- `ollama-service.ps1` – Optional helper to run Ollama as a Windows service
+- `service-utils.ps1` – Shared helper functions consumed by other scripts
+
+## 🔗 Helpful URLs
+- Frontend UI: http://localhost:3000
+- Backend API docs: http://localhost:3001/docs
 - Solr Admin: http://localhost:8983
 - Neo4j Browser: http://localhost:7474
 
-## Changes Made
-- Removed broken/redundant scripts (`start.ps1`, `start-dev.ps1`, `run_backend.bat`, etc.)
-- Fixed backend startup issues with proper uvicorn process management
-- Added comprehensive service status checking
-- Standardized utility functions for service management
-- Consolidated environment variable handling
-
-## Notes
-- All scripts should be run from the project root directory
-- Ensure `.env.local` is properly configured before starting services
-- Use the status script to verify all services are running correctly
+## ✅ Tips
+- Run PowerShell scripts with `-ExecutionPolicy Bypass` or add the folder to your trusted locations.
+- Use `cmd.exe` for `.bat` helpers so that `where`, `npm`, and `python` behave consistently.
+- Re-run the setup scripts whenever you install new tooling or update dependencies—they are idempotent and will simply report what still needs attention.
