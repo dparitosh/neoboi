@@ -125,7 +125,7 @@ const ChatInterface = ({ onGraphUpdate, loading: parentLoading }) => {
     };
 
     return (
-        <div style={{
+        <div className="p-4 bg-gray-200" style={{
             display: 'flex',
             flexDirection: 'column',
             height: '100%',

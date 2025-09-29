@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-09-27T19:11:03.019175",
+  "summary": {
+    "total_tests": 1,
+    "passed": 1,
+    "partial": 0,
+    "failed": 0,
+    "success_rate": 100.0
+  },
+  "results": {
+    "ollama_connection": {
+      "available": true,
+      "models": [
+        "llama3:latest",
+        "gemma3:4b"
+      ],
+      "llama3_available": true,
+      "status": "PASS"
+    }
+  }
+}

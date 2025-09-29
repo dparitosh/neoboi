@@ -1,23 +1,42 @@
 {
   "name": "neoboi-frontend",
+  "private": true,
   "version": "1.0.0",
-  "description": "React frontend for Neo4j Graph Visualization",
-  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js --dev",
-    "dev:watch": "nodemon server.js --dev",
-    "build": "echo 'No build step required for CDN-based React app'",
-    "serve": "node server.js"
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "axios": "^1.7.2",
+    "clsx": "^2.1.1",
+    "cytoscape": "^3.33.1",
+    "cytoscape-cose-bilkent": "^4.1.0",
+    "cytoscape-popper": "^2.0.0",
+    "lucide-react": "^0.544.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-error-boundary": "^6.0.0",
+    "react-router-dom": "^6.25.1",
+    "tailwind-merge": "^3.3.1",
+    "tippy.js": "^6.3.7"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.6",
+    "vite": "^5.2.0"
   },
-  "keywords": ["neo4j", "graph", "visualization", "react", "cytoscape"],
   "author": "NeoBoi Team",
   "license": "MIT"
 }

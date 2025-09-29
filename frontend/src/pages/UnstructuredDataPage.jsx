@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DocumentUpload from '../components/DocumentUpload';
 import DocumentSearch from '../components/DocumentSearch';
 import { FileText, Search, Upload, BarChart3, Settings } from 'lucide-react';
+import DataTable from '../components/table/DataTable';
 
 const UnstructuredDataPage = () => {
   const [activeTab, setActiveTab] = useState('upload');
