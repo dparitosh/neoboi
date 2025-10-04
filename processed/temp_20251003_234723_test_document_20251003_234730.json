@@ -1,0 +1,43 @@
+{
+  "success": true,
+  "content": "",
+  "metadata": {
+    "X-TIKA:Parsed-By": "org.apache.tika.parser.EmptyParser",
+    "X-TIKA:Parsed-By-Full-Set": "org.apache.tika.parser.EmptyParser",
+    "language": "",
+    "Content-Length": "216",
+    "Content-Type-Override": "multipart/form-data;boundary=74bfd5ca20f5565bfc9d7f80dc3850e6",
+    "Content-Type": "multipart/form-data; boundary=74bfd5ca20f5565bfc9d7f80dc3850e6"
+  },
+  "filename": "temp_20251003_234723_test_document.txt",
+  "file_size": 526,
+  "word_count": 0,
+  "processing_method": "apache_tika",
+  "processing_type": "tika",
+  "processed_at": "2025-10-03T23:47:30.047061",
+  "file_path": "uploads\\temp_20251003_234723_test_document.txt",
+  "chunks": [],
+  "chunk_embeddings": [],
+  "structured_data": {
+    "text_stats": {
+      "char_count": 0,
+      "word_count": 0,
+      "sentence_count": 0
+    },
+    "entities": [],
+    "relationships": [],
+    "keywords": [],
+    "topics": [],
+    "sentiment": {
+      "sentiment": "neutral",
+      "score": 0.0
+    },
+    "summary": "",
+    "processed_at": "2025-10-03T23:47:30.159070",
+    "metadata": {
+      "filename": "test_document.txt",
+      "original_filename": "test_document.txt"
+    }
+  },
+  "vector_processing": true
+}

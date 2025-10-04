@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": "Tika server not running",
+  "content": "",
+  "metadata": {},
+  "processing_type": "tika",
+  "processed_at": "2025-09-28T18:06:30.803758",
+  "file_path": "uploads\\temp_20250928_180626_20250928_180614_Bruggeman_From_Requirements_to_Product_An_MBSE_Approach.INCOSE2023-2.pdf",
+  "file_size": 4859326
+}

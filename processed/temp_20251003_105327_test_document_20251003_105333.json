@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "content": "This is a test document for verifying Tika server functionality.\n\nThe Tika server should be able to extract this text content and provide metadata about the document.\n\nKey features to test:\n- Text extraction from various formats\n- Metadata extraction (file size, word count, etc.)\n- Document processing pipeline integration\n- Neo4j vector storage\n\nThis document contains multiple paragraphs and should demonstrate that the document processing pipeline is working correctly after fixing the Tika server startup issue.",
+  "metadata": {},
+  "filename": "temp_20251003_105327_test_document.txt",
+  "file_size": 526,
+  "word_count": 77,
+  "processing_method": "plain_text",
+  "processing_type": "plain_text_fallback",
+  "processed_at": "2025-10-03T10:53:33.516991",
+  "file_path": "uploads\\temp_20251003_105327_test_document.txt",
+  "chunks": [],
+  "chunk_embeddings": [],
+  "structured_data": {
+    "text_stats": {
+      "char_count": 0,
+      "word_count": 0,
+      "sentence_count": 0
+    },
+    "entities": [],
+    "relationships": [],
+    "keywords": [],
+    "topics": [],
+    "sentiment": {
+      "sentiment": "neutral",
+      "score": 0.0
+    },
+    "summary": "",
+    "processed_at": "2025-10-03T10:53:33.516991",
+    "metadata": {
+      "filename": "test_document.txt",
+      "original_filename": "test_document.txt"
+    }
+  },
+  "vector_processing": true
+}

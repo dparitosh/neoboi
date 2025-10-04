@@ -32,15 +32,35 @@ class DocumentIngestionService:
         self.upload_dir.mkdir(exist_ok=True)
         self.processed_dir.mkdir(exist_ok=True)
 
-        # Initialize services
-        self.ocr_service = OCRService()
-        self.tika_service = TikaService()
+        # Initialize services with error handling
+        try:
+            self.ocr_service = OCRService()
+            self.ocr_available = False  # OCR disabled due to dependencies
+        except Exception as e:
+            logger.warning(f"OCR service initialization failed: {str(e)}")
+            self.ocr_service = None
+            self.ocr_available = False
+
+        try:
+            self.tika_service = TikaService()
+            # Try to start Tika server automatically
+            tika_jar_path = os.path.join(os.path.dirname(__file__), '..', 'lib', 'tika-server.jar')
+            if self.tika_service.start_tika_server(tika_jar_path):
+                self.tika_available = True
+                logger.info("Tika server started successfully")
+            else:
+                self.tika_available = False
+                logger.warning("Failed to start Tika server during initialization - will retry during document processing")
+        except Exception as e:
+            logger.warning(f"Tika service initialization failed: {str(e)}")
+            self.tika_service = None
+            self.tika_available = False
 
         # Supported file types
-        self.image_extensions = self.ocr_service.get_supported_formats()
-        self.document_extensions = self.tika_service.get_supported_formats()
+        self.image_extensions = [] if not self.ocr_available else self.ocr_service.get_supported_formats()
+        self.document_extensions = [] if not self.tika_available else self.tika_service.get_supported_formats()
 
-        logger.info("Document Ingestion Service initialized")
+        logger.info(f"Document Ingestion Service initialized - OCR: {self.ocr_available}, Tika: {self.tika_available}")
 
     def process_document(self, file_path: str) -> Dict[str, Any]:
         """
@@ -59,21 +79,28 @@ class DocumentIngestionService:
             logger.info(f"Processing document: {filename}")
 
             # Determine processing method based on file type
-            if file_ext in self.image_extensions:
+            if file_ext in self.image_extensions and self.ocr_available:
                 # Use OCR for images
                 result = self.ocr_service.extract_text_from_file(file_path)
                 result['processing_type'] = 'ocr'
-            elif file_ext in self.document_extensions:
-                # Use Tika for documents
-                result = self.tika_service.parse_document(file_path)
-                result['processing_type'] = 'tika'
+            elif file_ext in ['.txt', '.md'] or (file_ext in self.document_extensions and self.tika_available):
+                # For text files, always use plain text processing to avoid Tika issues
+                if file_ext in ['.txt', '.md']:
+                    result = self._process_as_plain_text(file_path)
+                    result['processing_type'] = 'plain_text'
+                else:
+                    # Use Tika for other document types
+                    result = self.tika_service.parse_document(file_path)
+                    result['processing_type'] = 'tika'
+                    # If Tika returns empty content, fall back to plain text
+                    if not result.get('content', '').strip():
+                        logger.warning("Tika returned empty content, falling back to plain text processing")
+                        result = self._process_as_plain_text(file_path)
+                        result['processing_type'] = 'plain_text_fallback'
             else:
-                return {
-                    'success': False,
-                    'error': f'Unsupported file type: {file_ext}',
-                    'filename': filename,
-                    'processing_type': 'unsupported'
-                }
+                # Fallback: try to read as plain text
+                result = self._process_as_plain_text(file_path)
+                result['processing_type'] = 'plain_text'
 
             # Add common metadata
             result.update({
@@ -97,6 +124,51 @@ class DocumentIngestionService:
                 'processing_type': 'error'
             }
 
+    def _process_as_plain_text(self, file_path: str) -> Dict[str, Any]:
+        """
+        Process file as plain text fallback
+
+        Args:
+            file_path: Path to the file
+
+        Returns:
+            Processing result
+        """
+        filename = os.path.basename(file_path)
+        file_ext = os.path.splitext(filename.lower())[1]
+
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            result = {
+                'success': True,
+                'content': content,
+                'metadata': {},
+                'filename': filename,
+                'file_size': os.path.getsize(file_path),
+                'word_count': len(content.split()),
+                'processing_method': 'plain_text'
+            }
+            logger.info(f"Processed as plain text: {filename}")
+            return result
+        except UnicodeDecodeError:
+            # Binary file that can't be processed
+            result = {
+                'success': False,
+                'error': f'Unsupported file type: {file_ext}. No suitable processing service available.',
+                'filename': filename,
+                'processing_type': 'unsupported'
+            }
+            return result
+        except Exception as e:
+            result = {
+                'success': False,
+                'error': f'Failed to process file: {str(e)}',
+                'filename': filename,
+                'processing_type': 'error'
+            }
+            return result
+
     def process_document_bytes(self, file_data: bytes, filename: str) -> Dict[str, Any]:
         """
         Process document from bytes
@@ -111,12 +183,23 @@ class DocumentIngestionService:
         try:
             file_ext = os.path.splitext(filename.lower())[1]
 
-            logger.info(f"Processing document from bytes: {filename}")
+            logger.info(f"Processing document from bytes: {filename} (size: {len(file_data)} bytes)")
+
+            # DEBUG: Log first 200 bytes to see what we're getting
+            logger.info(f"File data preview: {file_data[:200]}")
 
             # Save file temporarily for processing
             temp_path = self.upload_dir / f"temp_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
+            logger.info(f"Saving to temp path: {temp_path}")
             with open(temp_path, 'wb') as f:
                 f.write(file_data)
+
+            # DEBUG: Verify temp file was written correctly
+            if temp_path.exists():
+                with open(temp_path, 'rb') as f:
+                    saved_data = f.read()
+                logger.info(f"Temp file saved, size: {len(saved_data)} bytes")
+                logger.info(f"Temp file content preview: {saved_data[:200]}")
 
             try:
                 # Process the temporary file
@@ -251,11 +334,28 @@ class DocumentIngestionService:
         Returns:
             Dictionary of supported formats by processing type
         """
-        return {
-            'ocr': self.image_extensions,
-            'tika': self.document_extensions,
-            'all': list(set(self.image_extensions + self.document_extensions))
-        }
+        formats = {}
+
+        if self.ocr_available and self.ocr_service:
+            formats['ocr'] = self.image_extensions
+        else:
+            formats['ocr'] = []
+
+        if self.tika_available and self.tika_service:
+            formats['tika'] = self.document_extensions
+        else:
+            formats['tika'] = []
+
+        # Always support plain text files
+        formats['plain_text'] = ['.txt', '.md', '.csv', '.json', '.xml']
+
+        formats['all'] = list(set(
+            formats.get('ocr', []) +
+            formats.get('tika', []) +
+            formats.get('plain_text', [])
+        ))
+
+        return formats
 
     def list_processed_documents(self) -> List[Dict[str, Any]]:
         """

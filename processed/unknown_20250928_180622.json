@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "error": "Tika server not running",
+  "content": "",
+  "metadata": {},
+  "processing_type": "tika",
+  "processed_at": "2025-09-28T18:06:22.583764",
+  "file_path": "uploads\\temp_20250928_180618_20250928_180614_MBSE-Based_Requirement_Verification_MDAO.AIAA2022.6.2022-3722.pdf",
+  "file_size": 2901461
+}

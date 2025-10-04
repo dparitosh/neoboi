@@ -1,18 +1,23 @@
 import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import { Upload, FileText, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 
-const DocumentUpload = ({
+interface DocumentUploadProps {
+  onUploadComplete?: (result: any) => void;
+  maxFileSize?: number; // in MB
+  acceptedTypes?: string[];
+}
+
+const DocumentUpload: React.FC<DocumentUploadProps> = ({
   onUploadComplete,
   maxFileSize = 50,
   acceptedTypes = ['.pdf', '.docx', '.txt', '.png', '.jpg', '.jpeg']
 }) => {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
-  const [uploadResults, setUploadResults] = useState([]);
+  const [uploadResults, setUploadResults] = useState<any[]>([]);
   const [dragActive, setDragActive] = useState(false);
 
-  const handleDrag = useCallback((e) => {
+  const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
@@ -22,7 +27,7 @@ const DocumentUpload = ({
     }
   }, []);
 
-  const handleDrop = useCallback((e) => {
+  const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -33,16 +38,16 @@ const DocumentUpload = ({
     }
   }, []);
 
-  const handleFileSelect = (e) => {
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
       validateAndAddFiles(selectedFiles);
     }
   };
 
-  const validateAndAddFiles = (newFiles) => {
-    const validFiles = [];
-    const errors = [];
+  const validateAndAddFiles = (newFiles: File[]) => {
+    const validFiles: File[] = [];
+    const errors: string[] = [];
 
     newFiles.forEach(file => {
       // Check file size
@@ -68,7 +73,7 @@ const DocumentUpload = ({
     setFiles(prev => [...prev, ...validFiles]);
   };
 
-  const removeFile = (index) => {
+  const removeFile = (index: number) => {
     setFiles(prev => prev.filter((_, i) => i !== index));
   };
 
@@ -106,7 +111,7 @@ const DocumentUpload = ({
     }
   };
 
-  const formatFileSize = (bytes) => {
+  const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -115,7 +120,7 @@ const DocumentUpload = ({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 bg-gray-200">
+    <div className="w-full max-w-2xl mx-auto p-6">
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Document Upload</h2>
         <p className="text-gray-600">
@@ -253,12 +258,6 @@ const DocumentUpload = ({
       )}
     </div>
   );
-};
-
-DocumentUpload.propTypes = {
-  onUploadComplete: PropTypes.func,
-  maxFileSize: PropTypes.number,
-  acceptedTypes: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default DocumentUpload;

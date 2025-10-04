@@ -1,0 +1,7 @@
+INFO:     127.0.0.1:62595 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62814 - "GET /api/cache/stats HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62820 - "GET /api/cache/stats HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62824 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62901 - "GET /api/cache/stats HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62906 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62912 - "GET /docs HTTP/1.1" 200 OK

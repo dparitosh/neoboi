@@ -15,19 +15,19 @@
 ## 🚀 Quick Service Management
 
 ### Start All Services
-```powershell
+```bash
 # From project root
-powershell -ExecutionPolicy Bypass -File .\scripts\services\start-all.ps1
+powershell .\scripts\services\start-all.ps1
 ```
 
 ### Stop All Services
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\services\stop.ps1
+```bash
+powershell .\scripts\services\stop.ps1
 ```
 
 ### Check Status
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\services\status.ps1
+```bash
+powershell .\scripts\services\status.ps1
 ```
 
 ## 📍 Service URLs
@@ -37,7 +37,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\services\status.ps1
 - **API Docs**: http://localhost:3001/docs
 - **Solr Admin**: http://localhost:8983
 
-## 📋 Prerequisites Check
+## � Prerequisites Check
 
 Before running, ensure you have:
 
@@ -45,32 +45,32 @@ Before running, ensure you have:
 - [ ] Apache Solr installed and running
 - [ ] Apache Tika server running
 - [ ] Tesseract OCR installed
-- [ ] Ollama installed with requested models (`ollama pull llama2`, etc.)
-- [ ] Backend virtual environment ready (`scripts\services\setup-python-llm.bat`)
-- [ ] Frontend dependencies installed (`scripts\services\setup-offline-llm.bat`)
+- [ ] Ollama installed with models
+- [ ] Python dependencies installed (`pip install -r backend/requirements.txt`)
+- [ ] Node.js dependencies installed (`npm install` in frontend/)
 - [ ] `.env.local` configured with your service credentials
 
-## 🛠️ Individual Service Control
+## � Individual Service Control
 
 ### Frontend (Port 3000)
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\services\start-frontend.ps1
-powershell -ExecutionPolicy Bypass -File .\scripts\services\stop-frontend.ps1
+```bash
+powershell .\scripts\services\start-frontend.ps1
+powershell .\scripts\services\stop-frontend.ps1
 ```
 
 ### Backend (Port 3001)
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\services\start-backend.ps1
-powershell -ExecutionPolicy Bypass -File .\scripts\services\stop-backend.ps1
+```bash
+powershell .\scripts\services\start-backend.ps1
+powershell .\scripts\services\stop-backend.ps1
 ```
 
 ### Solr (Port 8983)
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\services\start-solr.ps1
-powershell -ExecutionPolicy Bypass -File .\scripts\services\stop-solr.ps1
+```bash
+powershell .\scripts\services\start-solr.ps1
+powershell .\scripts\services\stop-solr.ps1
 ```
 
-## 📚 Full Documentation
+## � Full Documentation
 
 For complete installation and setup instructions, see:
 
@@ -81,10 +81,10 @@ For complete installation and setup instructions, see:
 - [Tesseract Setup](docs/installation/tesseract-installation.md)
 - [Ollama Setup](docs/installation/ollama-installation.md)
 
-## 🚑 Quick Troubleshooting
+## � Quick Troubleshooting
 
 ### Services Won't Start
-```powershell
+```bash
 # Check port conflicts
 netstat -ano | findstr :3000
 netstat -ano | findstr :3001
@@ -94,7 +94,7 @@ netstat -ano | findstr :8983
 type .env.local
 
 # Check service status
-powershell -ExecutionPolicy Bypass -File .\scripts\services\status.ps1
+powershell .\scripts\services\status.ps1
 ```
 
 ### Common Issues
@@ -103,7 +103,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\services\status.ps1
 - **Dependencies missing**: Run `pip install -r backend/requirements.txt`
 - **Services not running**: Start individual services first
 
-## 🔜 Next Steps
+## � Next Steps
 
 1. **Verify Installation**: Check all services are running
 2. **Upload Documents**: Use the upload feature on the main page

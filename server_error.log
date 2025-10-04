@@ -1,0 +1,16 @@
+INFO:__main__:Loading environment from: D:\Software\boiSoftware\neoboi\backend\..\.env.local
+INFO:__main__:File exists: True
+INFO:__main__:NEO4J_URI loaded: True
+INFO:__main__:Initializing routes on app creation
+INFO:backend.neo4j_service:Neo4jService initialized for on_premise deployment
+INFO:__main__:Services initialized successfully
+INFO:backend.routes.routes:Unstructured data routes loaded successfully
+INFO:__main__:API routes included successfully
+INFO:__main__:Routes initialization complete
+INFO:__main__:Static files mounted from: D:\Software\boiSoftware\neoboi\backend\..\frontend\static
+INFO:__main__:Starting server on port 3001
+INFO:__main__:About to start uvicorn...
+INFO:     Started server process [8568]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:3001 (Press CTRL+C to quit)
